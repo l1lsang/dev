@@ -30,10 +30,10 @@
 
   --focus-ring: var(--accent);
 
-  /* 로고 (원본 색). 다크 모드에서는 남색 부분을 밝게 뒤집는다 */
-  --logo-navy: #092153;
-  --logo-blue: #155bfd;
-  --logo-green: #1fd7ab;
+  /* 로고: 사이트 색을 그대로 따른다 (다크 모드에서도 같이 바뀜) */
+  --logo-ink: var(--ink);
+  --logo-accent: var(--accent);
+  --logo-spark: #f59e0b;
 
   --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -123,8 +123,7 @@
     --accent-text: #f4a06b;
     --accent-wash: color-mix(in srgb, var(--accent) 12%, transparent);
 
-    --logo-navy: #e6ebf5;
-    --logo-blue: #3b78ff;
+    --logo-spark: #fbbf24;
 
     --danger: #f27a6e;
     --danger-hover: #f5978d;
