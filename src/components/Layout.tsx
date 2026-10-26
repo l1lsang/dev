@@ -5,16 +5,8 @@ import { useAuth } from '../lib/contexts'
 import { useDismiss } from '../lib/hooks'
 import { NAV, SITE } from '../lib/site'
 import { isSupabaseConfigured } from '../lib/supabase'
+import { BrandMark } from './BrandMark'
 import { Avatar, IconButton, Tooltip } from './ui'
-
-export function BrandMark() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" className="brand-mark">
-      <path d="M10 1.5a6.5 6.5 0 0 0-6.5 6.5c0 4.6 6.5 10.5 6.5 10.5s6.5-5.9 6.5-10.5A6.5 6.5 0 0 0 10 1.5Z" fill="currentColor" />
-      <circle cx="10" cy="8" r="2.4" fill="var(--surface)" />
-    </svg>
-  )
-}
 
 function UserMenu() {
   const { profile, user, signOut } = useAuth()

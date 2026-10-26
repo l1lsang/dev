@@ -35,7 +35,7 @@
 }
 
 .brand-mark {
-  color: var(--accent);
+  flex: none;
 }
 
 .nav {

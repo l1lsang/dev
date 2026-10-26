@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, Navigate, useSearchParams } from 'react-router'
-import { BrandMark } from '../components/Layout'
+import { BrandMark } from '../components/BrandMark'
 import { Button, Field } from '../components/ui'
 import { useAuth } from '../lib/contexts'
 import { safeNext } from '../lib/format'
@@ -69,7 +69,7 @@ export default function Login() {
     <div className="auth-page">
       <main id="main" className="auth-card panel">
         <Link to="/" className="brand auth-brand">
-          <BrandMark />
+          <BrandMark height={32} />
           {SITE.name}
         </Link>
 
