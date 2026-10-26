@@ -6,7 +6,7 @@ import type { LatLng } from '../lib/meeting/geo'
 
 export type MapMarker = LatLng & {
   id: string
-  kind: 'person' | 'result' | 'center' | 'pick'
+  kind: 'person' | 'result' | 'center' | 'pick' | 'poi'
   label: string
   /** 결과 순위(1부터) */
   rank?: number
@@ -25,8 +25,9 @@ const TILE_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyrigh
 
 function iconFor(m: MapMarker) {
   const cls = `pin pin-${m.kind}${m.active ? ' is-active' : ''}`
-  const html = m.kind === 'result' ? `<span>${m.rank ?? ''}</span>` : '<span></span>'
-  const size = m.kind === 'result' ? 28 : m.kind === 'center' ? 18 : 14
+  const numbered = m.kind === 'result' || m.kind === 'poi'
+  const html = numbered ? `<span>${m.rank ?? ''}</span>` : '<span></span>'
+  const size = m.kind === 'result' ? 28 : m.kind === 'poi' ? 22 : m.kind === 'center' ? 18 : 14
   return L.divIcon({ className: cls, html, iconSize: [size, size], iconAnchor: [size / 2, size / 2] })
 }
 
@@ -102,8 +103,8 @@ export function MapView({
             key={m.id}
             position={[m.lat, m.lng]}
             icon={iconFor(m)}
-            zIndexOffset={m.kind === 'result' ? (m.active ? 1000 : 500) : 0}
-            keyboard={Boolean(onMarkerClick && m.kind === 'result')}
+            zIndexOffset={m.kind === 'result' || m.kind === 'poi' ? (m.active ? 1000 : 500) : 0}
+            keyboard={Boolean(onMarkerClick && (m.kind === 'result' || m.kind === 'poi'))}
             title={m.label}
             eventHandlers={onMarkerClick ? { click: () => onMarkerClick(m.id) } : undefined}
           >

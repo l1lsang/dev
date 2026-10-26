@@ -4,6 +4,7 @@
 
 - **정기 모임** — 모임 개설·참여, 일정 등록, 참석/불참 응답
 - **만날 장소 찾기** — 멤버들이 사는 곳을 바탕으로 모두에게 공평한 역 추천
+- **역 주변 추천** — 그 역 근처의 카페 · 스터디룸 · 회의실 · 주차장을 모임에 맞게 골라 줌 (카카오 로컬 API)
 - **포트폴리오** — 작업물 업로드(대표 이미지, 링크, 기술 스택)
 - **이력서** — PDF 업로드, 공개 범위(나만 / 멤버) 선택, 멤버 피드백
 - **게시판 · 주간 목표** — 질문·정보 공유·회고, 이번 주 목표와 응원
@@ -25,7 +26,7 @@ npm run dev                  # http://localhost:5173
 | 명령 | 하는 일 |
 | --- | --- |
 | `npm run dev` | 개발 서버 |
-| `npm test` | 장소 추천 알고리즘 단위 테스트 (Vitest) |
+| `npm test` | 장소 추천 알고리즘 · 주변 장소 순위 · `/api/places` 단위 테스트 (Vitest) |
 | `npm run lint` | ESLint |
 | `npm run build` | 타입 체크 + 프로덕션 빌드 (`dist/`) |
 
@@ -54,11 +55,38 @@ npm run dev                  # http://localhost:5173
    - 발급된 Client ID / Secret을 Supabase **Authentication → Providers → GitHub**에 입력
 6. **이메일 로그인** — 기본 제공 메일 서버는 시간당 발송량이 매우 적다. 실제 운영 전에 **Authentication → SMTP**에서 Resend·SES 같은 SMTP를 연결하자.
 
-## 3. Vercel 배포
+## 3. 카카오 로컬 API (역 주변 장소 추천)
+
+키가 없어도 앱은 동작한다. 이때는 추천 목록 대신 카카오맵 검색 링크를 보여 준다.
+
+1. [developers.kakao.com](https://developers.kakao.com) 로그인 → **내 애플리케이션 → 애플리케이션 추가하기** (앱 이름: 커밋테이블)
+2. 만든 앱 → **앱 키**에서 **REST API 키** 복사
+3. 왼쪽 메뉴 **카카오맵 → 사용 설정 → 상태 ON**
+   (2024년 12월부터 새 앱은 이걸 켜야 지도·로컬 API가 동작한다. 꺼져 있으면 401 오류)
+4. 로컬: `.env`(또는 `.env.local`)에 추가하고 개발 서버를 다시 켠다.
+   ```
+   KAKAO_REST_API_KEY=복사한_REST_API_키
+   ```
+   `VITE_`로 시작하지 않으므로 브라우저 번들에 들어가지 않는다. 서버 함수 [`api/places.ts`](api/places.ts)만 읽는다.
+5. Vercel: **Settings → Environment Variables**에 같은 이름으로 추가하고 **Redeploy**.
+
+동작 방식
+
+- 브라우저 → `/api/places?lat=..&lng=..` (Vercel 함수, 로컬에선 [`vite.config.ts`](vite.config.ts)의 미들웨어가 같은 파일을 실행)
+- 함수가 카카오에 6번 검색(카페 카테고리, 스터디룸, 스터디카페, 회의실, 공유오피스, 주차장 카테고리)해서 종류별로 묶어 돌려준다.
+- 같은 역은 같은 주소로 요청하므로 응답이 Vercel CDN에 하루 캐시된다. 호출량이 거의 늘지 않는다.
+- 순위는 화면 쪽 [`src/lib/meeting/nearby.ts`](src/lib/meeting/nearby.ts)에서 매긴다. 걷는 시간이 기본이고, 모임에 맞는 곳에 가산점을 준다.
+  - 카페: 단체석이 많은 대형 브랜드 우선, 테마카페(보드게임·만화 등)·스터디카페 제외
+  - 스터디: 방을 빌리는 스터디룸·모임공간 우선, 1인석 위주 스터디카페는 뒤로, 독서실 제외
+  - 회의실: 시간 단위 회의실 우선, 공유오피스는 대여 여부 확인 안내
+  - 주차장: 공영주차장 우선, 거주자·직원 전용 제외
+- 모임장은 목록에서 **여기로 일정 잡기**를 누르면 장소 이름·좌표·주소가 채워진 일정 추가 창이 열린다.
+
+## 4. Vercel 배포
 
 1. 이 폴더를 GitHub 저장소로 올리고 Vercel에서 Import (Framework: Vite 자동 인식).
-2. **Settings → Environment Variables**에 `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` 추가.
-3. 배포. [`vercel.json`](vercel.json)이 모든 경로를 `index.html`로 돌려 SPA 라우팅이 새로고침에도 동작한다.
+2. **Settings → Environment Variables**에 `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, (선택) `KAKAO_REST_API_KEY` 추가.
+3. 배포. [`vercel.json`](vercel.json)이 `/api/`를 뺀 모든 경로를 `index.html`로 돌려 SPA 라우팅이 새로고침에도 동작한다.
 4. 배포 주소를 Supabase Site URL / Redirect URLs에 반영 (2-4).
 
 ---
@@ -99,11 +127,13 @@ npm run dev                  # http://localhost:5173
 ## 폴더 구조
 
 ```
+api/
+  places.ts     Vercel 함수: 역 주변 장소 검색 (카카오 로컬 API)
 src/
-  api/          Supabase 쿼리 (도메인별)
+  api/          Supabase 쿼리 (도메인별) + /api/places 호출
   components/   공용 UI (Layout, 지도, 장소 추천, 폼 필드, 대화상자 …)
   lib/
-    meeting/    장소 추천 알고리즘 + 후보 역 데이터
+    meeting/    장소 추천 알고리즘 + 후보 역 데이터 + 주변 장소 순위
     useForm.ts  blur 검증 + 초안 자동 저장
   pages/        라우트별 화면
   styles/       디자인 토큰 → 기본 → 컴포넌트 → 레이아웃 → 페이지
@@ -125,4 +155,5 @@ supabase/migrations/   스키마 · RLS · Storage
 - **서비스 이름** — [`src/lib/site.ts`](src/lib/site.ts)의 `SITE`와 `index.html`의 `<title>`
 - **후보 역 추가** — [`src/lib/meeting/hubs.ts`](src/lib/meeting/hubs.ts)에 한 줄 추가 (좌표는 근사값)
 - **지도 타일** — [`MapView.tsx`](src/components/MapView.tsx)의 `TILE_URL`. 지금은 키 없이 쓰는 OSM 기본 타일이다. 트래픽이 늘면 [OSM 타일 정책](https://operations.osmfoundation.org/policies/tiles/)에 맞게 MapTiler·Stadia 같은 제공자로 바꾸자.
-- **주소 검색** — OSM Nominatim을 버튼을 눌렀을 때만 호출한다(자동완성 금지 정책). 카카오 로컬 API로 바꾸면 국내 주소 검색 품질이 좋아진다.
+- **주소 검색** — OSM Nominatim을 버튼을 눌렀을 때만 호출한다(자동완성 금지 정책). 카카오 키를 연결했으니 `api/`에 주소 검색 함수를 하나 더 만들면 국내 주소 검색 품질이 좋아진다.
+- **주변 추천 규칙** — [`nearby.ts`](src/lib/meeting/nearby.ts)의 `judge()`에서 종류별 가산점·제외 규칙을 바꾼다. 검색어·반경은 [`api/places.ts`](api/places.ts)의 `SEARCHES`.

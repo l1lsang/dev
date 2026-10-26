@@ -1463,3 +1463,157 @@
 .draft-notice svg {
   margin-top: 0;
 }
+
+/* ------------------------------------------------------------------
+   Nearby places (추천 역 주변 카페·스터디 공간·회의실·주차장)
+------------------------------------------------------------------- */
+.nearby {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border-top: 1px solid var(--border);
+}
+
+.nearby-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-4);
+}
+
+.nearby-head h3 {
+  font-size: var(--text-body);
+}
+
+.nearby .tab-panel {
+  padding-top: var(--space-4);
+}
+
+.nearby-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-6);
+}
+
+.nearby-list-wrap {
+  flex: 999 1 340px;
+  min-width: 0;
+}
+
+.nearby-map {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.nearby-list > li + li {
+  border-top: 1px solid var(--border);
+}
+
+.nearby-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+}
+
+/* 지도의 번호 표시와 같은 모양으로 맞춰 목록↔지도를 오가기 쉽게 */
+.nearby-rank,
+.pin-poi span {
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--ink-2);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-meta);
+  font-weight: var(--weight-semibold);
+}
+
+.nearby-rank {
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+.nearby-row.is-active .nearby-rank,
+.pin-poi.is-active span {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.nearby-main {
+  display: grid;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.nearby-name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  justify-self: start;
+  /* 누르는 영역 44px, 줄 높이는 그대로 */
+  min-height: var(--hit);
+  margin-block: -10px;
+}
+
+.nearby-name svg {
+  flex: none;
+  color: var(--ink-3);
+}
+
+.nearby-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  flex: none;
+}
+
+.nearby-empty,
+.nearby-fallback {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+}
+
+.nearby-fallback-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.nearby-partial,
+.nearby-dev-hint {
+  margin-top: var(--space-2);
+}
+
+.nearby-method {
+  margin-top: calc(var(--space-2) * -1);
+}
+
+@media (max-width: 767.98px) {
+  .nearby {
+    padding: var(--space-4);
+  }
+
+  .nearby-row {
+    flex-wrap: wrap;
+  }
+
+  .nearby-actions {
+    width: 100%;
+    padding-left: calc(24px + var(--space-3));
+  }
+}
+
+@media (max-width: 767.98px) {
+  .nearby .tab {
+    padding: 0 var(--space-2);
+  }
+}

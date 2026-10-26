@@ -131,7 +131,7 @@ function SessionDrawer({
           id="f-place_name"
           label="장소"
           error={form.errors.place_name}
-          hint={draft.lat ? '장소 찾기에서 고른 역이에요. 카페 이름을 덧붙여도 좋아요.' : '역 이름이나 카페 이름을 적어 주세요.'}
+          hint={draft.lat ? '장소 찾기에서 고른 곳이에요. 출구 번호나 층수를 덧붙이면 찾아오기 쉬워요.' : '역 이름이나 카페 이름을 적어 주세요.'}
         >
           <input {...form.input('place_name')} className="input" maxLength={80} placeholder="왕십리역 2번 출구 스터디카페" aria-required="true" />
         </Field>
@@ -508,6 +508,27 @@ function PlaceTab({
                   >
                     <CalendarPlus size={16} strokeWidth={1.75} aria-hidden="true" />
                     {r.hub.name}에서 일정 잡기
+                  </Button>
+                )
+              : undefined
+          }
+          renderPlaceAction={
+            isHost
+              ? (p, hub) => (
+                  <Button
+                    variant="secondary"
+                    onClick={() =>
+                      onPick({
+                        ...emptyDraft(),
+                        place_name: `${p.name} (${hub.name})`.slice(0, 80),
+                        // 주소·전화번호를 메모에 미리 넣어 두면 멤버들이 찾아오기 쉽다
+                        note: [p.address, p.phone].filter(Boolean).join(' · ').slice(0, 500),
+                        lat: p.lat,
+                        lng: p.lng,
+                      })
+                    }
+                  >
+                    여기로 일정 잡기
                   </Button>
                 )
               : undefined

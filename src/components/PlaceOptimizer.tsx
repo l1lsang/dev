@@ -1,8 +1,11 @@
-import { ExternalLink, Route } from 'lucide-react'
+import { Route } from 'lucide-react'
 import { useId, useMemo, useState, type ReactNode } from 'react'
 import { formatMinutes } from '../lib/format'
+import type { Hub } from '../lib/meeting/hubs'
+import type { RankedPlace } from '../lib/meeting/nearby'
 import { mapLinks, planMeeting, type Participant, type PlaceResult } from '../lib/meeting/optimize'
 import { MapView, type MapMarker } from './MapView'
+import { NearbyPlaces } from './NearbyPlaces'
 import { EmptyState } from './states'
 
 export function FairnessControl({ value, onChange }: { value: number; onChange: (v: number) => void }) {
@@ -35,11 +38,14 @@ export function PlaceResults({
   participants,
   fairness,
   renderAction,
+  renderPlaceAction,
   mapHeight = 400,
 }: {
   participants: Participant[]
   fairness: number
   renderAction?: (result: PlaceResult) => ReactNode
+  /** 근처 카페·스터디룸 같은 개별 장소에 붙일 버튼 */
+  renderPlaceAction?: (place: RankedPlace, hub: Hub) => ReactNode
   mapHeight?: number
 }) {
   const plan = useMemo(
@@ -154,26 +160,6 @@ export function PlaceResults({
               <section className="leg-detail" aria-labelledby="leg-title">
                 <div className="leg-head">
                   <h3 id="leg-title">{selected.hub.name}까지 각자 걸리는 시간</h3>
-                  <div className="leg-links">
-                    <a
-                      className="btn btn-ghost"
-                      href={mapLinks.kakaoSearch(`${selected.hub.name} 카페`)}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      카카오맵에서 카페 보기
-                      <ExternalLink size={14} strokeWidth={1.75} aria-hidden="true" />
-                    </a>
-                    <a
-                      className="btn btn-ghost"
-                      href={mapLinks.naverSearch(`${selected.hub.name} 스터디룸`)}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      네이버 지도에서 스터디룸 보기
-                      <ExternalLink size={14} strokeWidth={1.75} aria-hidden="true" />
-                    </a>
-                  </div>
                 </div>
                 <ul className="legs">
                   {[...selected.legs]
@@ -190,6 +176,14 @@ export function PlaceResults({
                 </ul>
                 {renderAction && <div className="leg-action">{renderAction(selected)}</div>}
               </section>
+            )}
+
+            {selected && (
+              <NearbyPlaces
+                key={selected.hub.id}
+                hub={selected.hub}
+                renderPlaceAction={renderPlaceAction ? (p) => renderPlaceAction(p, selected.hub) : undefined}
+              />
             )}
           </>
         )}
