@@ -1,0 +1,336 @@
+/* ------------------------------------------------------------------
+   App chrome — full width, never capped
+------------------------------------------------------------------- */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  width: 100%;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-header-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  height: 64px;
+  padding: 0 var(--space-6);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--hit);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-body);
+  white-space: nowrap;
+}
+
+.brand-mark {
+  color: var(--accent);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--hit);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius);
+  color: var(--ink-2);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: var(--ink);
+  background: var(--surface-hover);
+}
+
+.nav-link.active {
+  color: var(--ink);
+  background: var(--surface-sunken);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
+.menu-toggle {
+  display: none;
+}
+
+.mobile-nav {
+  display: grid;
+  padding: var(--space-2) var(--space-4) var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius);
+  font-weight: var(--weight-medium);
+  color: var(--ink-2);
+}
+
+.mobile-nav-link.active {
+  color: var(--ink);
+  background: var(--surface-sunken);
+}
+
+.user-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--hit);
+  height: var(--hit);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+}
+
+/* Popover / menu (L2) */
+.menu-wrap,
+.filter-menu {
+  position: relative;
+}
+
+.popover {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  right: 0;
+  z-index: var(--z-popover);
+  min-width: 200px;
+  padding: var(--space-1);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-2), var(--edge-light);
+  animation: pop-in var(--motion-150) var(--ease-out);
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.menu {
+  display: grid;
+}
+
+.menu-caption {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  margin-bottom: var(--space-1);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-secondary);
+}
+
+.menu-caption strong {
+  font-weight: var(--weight-medium);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--hit);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink);
+  font-size: var(--text-secondary);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.menu-item:hover,
+.menu-item:focus-visible {
+  background: var(--surface-hover);
+  outline-offset: -2px;
+}
+
+.menu-item.is-danger {
+  color: var(--danger);
+}
+
+.setup-banner {
+  padding: var(--space-3) var(--space-6);
+  background: var(--accent-wash);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-secondary);
+  color: var(--ink);
+}
+
+main {
+  flex: 1;
+  width: 100%;
+}
+
+main:focus {
+  outline: none;
+}
+
+/* ------------------------------------------------------------------
+   Page body — the only thing capped to --vp-wide
+------------------------------------------------------------------- */
+.page {
+  width: 100%;
+  max-width: var(--vp-wide);
+  margin-inline: auto;
+  padding: var(--space-8) var(--space-6) var(--space-16);
+}
+
+.page-narrow {
+  max-width: calc(640px + var(--space-6) * 2);
+}
+
+.page-read {
+  max-width: calc(760px + var(--space-6) * 2);
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.page-header-text {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.page-desc {
+  max-width: var(--prose-max);
+  color: var(--ink-2);
+}
+
+.page-meta {
+  color: var(--ink-2);
+  font-size: var(--text-secondary);
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-secondary);
+  color: var(--ink-3);
+}
+
+.breadcrumb a {
+  display: inline-flex;
+  align-items: center;
+  /* 누르는 영역 44px, 레이아웃 높이는 24px 그대로 */
+  min-height: var(--hit);
+  margin-block: -10px;
+  max-width: 40ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.breadcrumb a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: var(--space-8) var(--space-6);
+  color: var(--ink-2);
+  font-size: var(--text-secondary);
+}
+
+.site-footer-inner {
+  display: grid;
+  gap: var(--space-2);
+  max-width: var(--vp-wide);
+  margin-inline: auto;
+}
+
+.site-footer strong {
+  color: var(--ink);
+  font-weight: var(--weight-semibold);
+}
+
+/* ------------------------------------------------------------------
+   Narrow
+------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+  .site-header-inner {
+    gap: var(--space-3);
+    height: 56px;
+    padding: 0 var(--space-2) 0 var(--space-4);
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+  }
+
+  .setup-banner {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .page {
+    padding: var(--space-6) var(--space-4) var(--space-12);
+  }
+
+  .page-narrow,
+  .page-read {
+    max-width: none;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .page-actions {
+    flex-wrap: wrap;
+  }
+
+  .site-footer {
+    padding: var(--space-6) var(--space-4);
+  }
+}
